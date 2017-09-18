@@ -2,43 +2,34 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import Card from './Card.jsx';
+import connect from './storage.jsx';
 
 class List extends React.Component {
-    constructor (props) {
-        super(props);
-        this.state = {
-            name: '',
-            cards: [],
-        };
-    }
-
     saveName = (input) => {
-        this.setState({ name: input.target.value });
+        this.props.saveData('cardName', input.target.value);
     }
 
     addCard = () => {
-        this.setState((oldState) => ({
-            name: '',
-            cards: [
-                ...oldState.cards,
-                oldState.name,
-            ],
-        }));
+        const newName = this.props.loadData('cardName');
+        const cards = this.props.loadData('cards');
+        this.props.saveData('cards', [...cards, newName]);
+        this.props.saveData('cardName', '');
     }
 
     render () {
         const { name } = this.props;
+        const cards = this.props.loadData('cards') || [];
         return (
             <div>
                 {name}
                 <ul>
-                    {this.state.cards.map((cardName, index) => <Card key={index} name={cardName}/>)}
+                    {cards.map((cardName, index) => <Card key={index} name={cardName}/>)}
                 </ul>
                 <input
                     onChange={this.saveName}
                     onBlur={this.addCard}
                     placeholder="Add card"
-                    value={this.state.name}
+                    value={this.props.loadData('cardName') || ''}
                 />
             </div>
         );
@@ -47,6 +38,8 @@ class List extends React.Component {
 
 List.propTypes = {
     name: PropTypes.string,
+    saveData: PropTypes.func,
+    loadData: PropTypes.func,
 };
 
-export default List;
+export default connect(List);

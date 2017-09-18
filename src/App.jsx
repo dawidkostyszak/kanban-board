@@ -1,43 +1,41 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import List from './List.jsx';
+import connect from './storage.jsx';
 
 class App extends React.Component {
-    constructor (props) {
-        super(props);
-        this.state = {
-            name: '',
-            lists: [],
-        };
-    }
-
     addList = () => {
-        this.setState((oldState) => ({
-            name: '',
-            lists: [
-                ...oldState.lists,
-                oldState.name,
-            ],
-        }));
+        const newName = this.props.loadData('listName');
+        const lists = this.props.loadData('lists') || [];
+        this.props.saveData('lists', [...lists, newName]);
+        this.props.saveData('listName', '');
     }
 
     saveName = (input) => {
-        this.setState({ name: input.target.value });
+        this.props.saveData('listName', input.target.value);
     }
 
     render () {
+        const lists = this.props.loadData('lists') || [];
         return (
             <div>
                 <input
                     onBlur={this.addList}
                     onChange={this.saveName}
                     placeholder="Add list"
-                    value={this.state.name}
+                    value={this.props.loadData('listName') || ''}
                 />
-                {this.state.lists.map((name, index) => <List key={index} name={name}/>)}
+                {lists.map((name, index) => <List key={index} name={name} />)}
             </div>
         );
     }
 }
 
-export default App;
+App.propTypes = {
+    saveData: PropTypes.func,
+    loadData: PropTypes.func,
+};
+
+
+export default connect(App);
