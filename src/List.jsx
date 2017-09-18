@@ -11,14 +11,19 @@ class List extends React.Component {
 
     addCard = () => {
         const newName = this.props.loadData('cardName');
-        const cards = this.props.loadData('cards') || [];
-        this.props.saveData('cards', [...cards, newName]);
+
+        if (newName.trim().length) {
+            const cards = this.loadCards();
+            this.props.saveData(`cards-${this.props.name}`, [...cards, newName]);
+        }
         this.props.saveData('cardName', '');
     }
 
+    loadCards = () => this.props.loadData(`cards-${this.props.name}`) || [];
+
     render () {
         const { name } = this.props;
-        const cards = this.props.loadData('cards') || [];
+        const cards = this.loadCards();
         return (
             <div>
                 {name}

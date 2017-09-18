@@ -7,8 +7,11 @@ import connect from './storage.jsx';
 class App extends React.Component {
     addList = () => {
         const newName = this.props.loadData('listName');
-        const lists = this.props.loadData('lists') || [];
-        this.props.saveData('lists', [...lists, newName]);
+
+        if (newName.trim().length) {
+            const lists = this.loadLists();
+            this.props.saveData('lists', [...lists, newName]);
+        }
         this.props.saveData('listName', '');
     }
 
@@ -16,8 +19,10 @@ class App extends React.Component {
         this.props.saveData('listName', input.target.value);
     }
 
+    loadLists = () => this.props.loadData('lists') || []
+
     render () {
-        const lists = this.props.loadData('lists') || [];
+        const lists = this.loadLists();
         return (
             <div>
                 <input
