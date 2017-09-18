@@ -1,5 +1,6 @@
 import EventEmitter from 'events';
 import React from 'react';
+import cookie from 'react-cookies';
 
 class SimpleStorage extends EventEmitter {
     constructor (onChange) {
@@ -13,7 +14,7 @@ class SimpleStorage extends EventEmitter {
         this.emit('change');
     }
 
-    load = (key) => this.store[key] || [];
+    load = (key) => this.store[key];
 
     remove = (key) => {
         delete this.store[key];
@@ -21,10 +22,29 @@ class SimpleStorage extends EventEmitter {
     }
 }
 
+class CookieStorage extends EventEmitter {
+    constructor (onChange) {
+        super();
+        this.on('change', onChange);
+    }
+
+    save = (key, value) => {
+        cookie.save(key, value);
+        this.emit('change');
+    }
+
+    load = (key) => cookie.load(key);
+
+    remove = (key) => {
+        cookie.remove(key);
+        this.emit('change');
+    }
+}
+
 const connect = (WrappedComponent) => class extends React.Component {
     constructor (props) {
         super(props);
-        this.storage = new SimpleStorage(this.forceUpdate.bind(this));
+        this.storage = new CookieStorage(this.forceUpdate.bind(this));
     }
 
     render () {

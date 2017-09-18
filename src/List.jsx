@@ -11,7 +11,7 @@ class List extends React.Component {
 
     addCard = () => {
         const newName = this.props.loadData('cardName');
-        const cards = this.props.loadData('cards');
+        const cards = this.props.loadData('cards') || [];
         this.props.saveData('cards', [...cards, newName]);
         this.props.saveData('cardName', '');
     }
@@ -23,7 +23,7 @@ class List extends React.Component {
             <div>
                 {name}
                 <ul>
-                    {cards.map((cardName, index) => <Card key={index} name={cardName}/>)}
+                    {cards.map((cardName, index) => <Card key={index} name={cardName} />)}
                 </ul>
                 <input
                     onChange={this.saveName}
