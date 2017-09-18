@@ -25,12 +25,13 @@ class List extends React.Component {
         const { name } = this.props;
         const cards = this.loadCards();
         return (
-            <div>
-                {name}
+            <div className="c-list">
+                <span className="c-list__title">{name}</span>
                 <ul>
                     {cards.map((cardName, index) => <Card key={index} name={cardName} />)}
                 </ul>
                 <input
+                    className="c-list__button"
                     onChange={this.saveName}
                     onBlur={this.addCard}
                     placeholder="Add card"

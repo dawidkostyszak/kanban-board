@@ -1,0 +1,12 @@
+.c-card {
+  background-color: #ffffff;
+  list-style: none;
+  border-radius: 5px;
+  margin: 0.25rem 0.5rem;
+  padding: 0.5rem;
+
+  &__title {
+    color: #4d4d4d;
+    font-size: 1.5rem;
+  }
+}

@@ -24,14 +24,15 @@ class App extends React.Component {
     render () {
         const lists = this.loadLists();
         return (
-            <div>
+            <div className="c-app">
+                {lists.map((name, index) => <List key={index} name={name} />)}
                 <input
+                    className="c-app__button"
                     onBlur={this.addList}
                     onChange={this.saveName}
                     placeholder="Add list"
                     value={this.props.loadData('listName') || ''}
                 />
-                {lists.map((name, index) => <List key={index} name={name} />)}
             </div>
         );
     }

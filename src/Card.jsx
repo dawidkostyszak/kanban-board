@@ -4,8 +4,8 @@ import PropTypes from 'prop-types';
 const Card = (props) => {
     const { name } = props;
     return (
-        <li>
-            {name}
+        <li className="c-card">
+            <span className="c-card__title">{name}</span>
         </li>
     );
 };
