@@ -55,6 +55,7 @@ const mapDispatchToProps = (dispatch, state) => ({
         const newList = {
             id: state.lists.length + 1,
             name: '',
+            newName: '',
             cards: [],
             isNew: true,
         };

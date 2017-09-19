@@ -28,6 +28,18 @@
       background-color: #cdd2d4;
     }
   }
+
+  &__change_button {
+    background: none;
+    float: right;
+    position: relative;
+    top: -15px;
+
+    &:after {
+      content: '\2026';
+      font-size: 20px;
+    }
+  }
 }
 
 .c-new-list {

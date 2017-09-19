@@ -5,6 +5,13 @@ import Card from './Card.jsx';
 import connect from './Store.jsx';
 
 class List extends React.Component {
+    constructor (props) {
+        super(props);
+        this.state = {
+            editName: false,
+        };
+    }
+
     addNewCard = () => {
         this.props.addNewCard();
     }
@@ -14,14 +21,29 @@ class List extends React.Component {
     }
 
     addList = () => {
-        const { list: { name } } = this.props;
-        if (name.trim().length) {
-            this.props.saveList();
+        const { list: { newName } } = this.props;
+        if (newName.trim().length) {
+            this.props.saveList(newName);
         }
     }
 
     removeList = () => {
         this.props.removeList();
+    }
+
+    saveEditName = () => {
+        this.addList();
+        this.setState({
+            editName: false,
+        });
+    }
+
+    exitEditName = () => {
+        const { list: { name } } = this.props;
+        this.props.updateListName(name);
+        this.setState({
+            editName: false,
+        });
     }
 
     renderNewCardButton () {
@@ -39,18 +61,54 @@ class List extends React.Component {
         );
     }
 
+    renderListTitle () {
+        const { list: { name, newName } } = this.props;
+        if (this.state.editName) {
+            return (
+                <span>
+                    <input
+                        className="c-input"
+                        onChange={this.saveListName}
+                        value={newName}
+                    />
+                    <button
+                        className="c-button c-button--save"
+                        onClick={this.saveEditName}
+                    >
+                        Save
+                    </button>
+                    <button
+                        className="c-button c-button--cancel"
+                        onClick={this.exitEditName}
+                    >
+                        X
+                    </button>
+                </span>
+            );
+        }
+
+        return (
+            <span className="c-list__title">
+                {name}
+                <button
+                    className="c-button c-list__change_button"
+                    onClick={() => { this.setState({ editName: true }); }}
+                />
+            </span>
+        );
+    }
+
     renderList () {
         const {
             list: {
                 id: listId,
-                name,
                 cards,
             },
         } = this.props;
 
         return (
             <div className="c-list">
-                <span className="c-list__title">{name}</span>
+                {this.renderListTitle()}
                 <ul>
                     {cards.map((card) => (
                         <Card
@@ -66,7 +124,7 @@ class List extends React.Component {
     }
 
     renderNewList () {
-        const { list: { name } } = this.props;
+        const { list: { newName } } = this.props;
 
         return (
             <div className="c-new-list">
@@ -74,7 +132,7 @@ class List extends React.Component {
                     className="c-input"
                     onChange={this.saveListName}
                     placeholder="Add a list..."
-                    value={name}
+                    value={newName}
                 />
                 <button
                     className="c-button c-button--save"
@@ -110,6 +168,7 @@ List.propTypes = {
     list: PropTypes.shape({
         id: PropTypes.number,
         name: PropTypes.string,
+        newName: PropTypes.string,
         cards: PropTypes.arrayOf(PropTypes.shape()),
         isNew: PropTypes.bool,
         newCardAdded: PropTypes.bool,
@@ -141,12 +200,12 @@ const mapDispatchToProps = (dispatch, state, props) => ({
             lists,
         });
     },
-    updateListName: (name) => {
+    updateListName: (newName) => {
         const lists = state.lists.map((list) => {
             if (list.id === props.list.id) {
                 return {
                     ...list,
-                    name,
+                    newName,
                 };
             }
             return list;
@@ -157,11 +216,12 @@ const mapDispatchToProps = (dispatch, state, props) => ({
             lists,
         });
     },
-    saveList: () => {
+    saveList: (name) => {
         const lists = state.lists.map((list) => {
             if (list.id === props.list.id) {
                 return {
                     ...list,
+                    name,
                     isNew: false,
                 };
             }
