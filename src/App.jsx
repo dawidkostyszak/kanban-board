@@ -2,36 +2,31 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import List from './List.jsx';
-import connect from './storage.jsx';
+import connect from './Store.jsx';
 
 class App extends React.Component {
     addList = () => {
-        const newName = this.props.loadData('listName');
-
-        if (newName.trim().length) {
-            const lists = this.loadLists();
-            this.props.saveData('lists', [...lists, newName]);
+        const { newListName } = this.props;
+        if (newListName.trim().length) {
+            this.props.addList(newListName);
         }
-        this.props.saveData('listName', '');
     }
 
     saveName = (input) => {
-        this.props.saveData('listName', input.target.value);
+        this.props.saveListName(input.target.value);
     }
 
-    loadLists = () => this.props.loadData('lists') || []
-
     render () {
-        const lists = this.loadLists();
+        const { lists = [], newListName } = this.props;
         return (
             <div className="c-app">
-                {lists.map((name, index) => <List key={index} name={name} />)}
+                {lists.map((list, index) => <List key={index} list={list} />)}
                 <input
                     className="c-app__button"
                     onBlur={this.addList}
                     onChange={this.saveName}
-                    placeholder="Add list"
-                    value={this.props.loadData('listName') || ''}
+                    placeholder="Add a list..."
+                    value={newListName}
                 />
             </div>
         );
@@ -39,9 +34,38 @@ class App extends React.Component {
 }
 
 App.propTypes = {
-    saveData: PropTypes.func,
-    loadData: PropTypes.func,
+    addList: PropTypes.func,
+    saveListName: PropTypes.func,
+    newListName: PropTypes.string,
+    lists: PropTypes.arrayOf(PropTypes.shape()),
 };
 
+const mapStateToProps = (state) => ({
+    lists: state.lists,
+    newListName: state.newListName,
+});
 
-export default connect(App);
+const mapDispatchToProps = (dispatch, state) => ({
+    addList: (newListName) => {
+        const newList = {
+            id: state.lists.length + 1,
+            name: newListName,
+            cards: [],
+            newCardName: '',
+        };
+
+        dispatch({
+            ...state,
+            lists: [...state.lists, newList],
+            newListName: '',
+        });
+    },
+    saveListName: (newListName) => {
+        dispatch({
+            ...state,
+            newListName,
+        });
+    },
+});
+
+export default connect(App, { mapStateToProps, mapDispatchToProps });

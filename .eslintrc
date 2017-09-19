@@ -18,6 +18,7 @@
     "import/extensions": ["warn", "never", {
         "jsx": "always"
     }],
+    "react/jsx-no-bind": "off",
     "arrow-parens": ["error", "always"],
     "space-before-function-paren": ["error", "always"]
   },

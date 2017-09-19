@@ -2,28 +2,22 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import Card from './Card.jsx';
-import connect from './storage.jsx';
+import connect from './Store.jsx';
 
 class List extends React.Component {
     saveName = (input) => {
-        this.props.saveData('cardName', input.target.value);
+        this.props.saveCardName(input.target.value);
     }
 
     addCard = () => {
-        const newName = this.props.loadData('cardName');
-
-        if (newName.trim().length) {
-            const cards = this.loadCards();
-            this.props.saveData(`cards-${this.props.name}`, [...cards, newName]);
+        const { list: { newCardName } } = this.props;
+        if (newCardName.trim().length) {
+            this.props.addCard(newCardName);
         }
-        this.props.saveData('cardName', '');
     }
 
-    loadCards = () => this.props.loadData(`cards-${this.props.name}`) || [];
-
     render () {
-        const { name } = this.props;
-        const cards = this.loadCards();
+        const { list: { name, cards, newCardName } } = this.props;
         return (
             <div className="c-list">
                 <span className="c-list__title">{name}</span>
@@ -35,7 +29,7 @@ class List extends React.Component {
                     onChange={this.saveName}
                     onBlur={this.addCard}
                     placeholder="Add card"
-                    value={this.props.loadData('cardName') || ''}
+                    value={newCardName}
                 />
             </div>
         );
@@ -43,9 +37,49 @@ class List extends React.Component {
 }
 
 List.propTypes = {
-    name: PropTypes.string,
-    saveData: PropTypes.func,
-    loadData: PropTypes.func,
+    addCard: PropTypes.func,
+    saveCardName: PropTypes.func,
+    list: PropTypes.shape({
+        id: PropTypes.number,
+        name: PropTypes.string,
+        cards: PropTypes.arrayOf(PropTypes.string),
+        newCardName: PropTypes.string,
+    }),
 };
 
-export default connect(List);
+const mapDispatchToProps = (dispatch, state, props) => ({
+    addCard: (newCardName) => {
+        const lists = state.lists.map((list) => {
+            if (list.id === props.list.id) {
+                return {
+                    ...list,
+                    cards: [...list.cards, newCardName],
+                    newCardName: '',
+                };
+            }
+            return list;
+        });
+        dispatch({
+            ...state,
+            lists,
+        });
+    },
+    saveCardName: (newCardName) => {
+        const lists = state.lists.map((list) => {
+            if (list.id === props.list.id) {
+                return {
+                    ...list,
+                    newCardName,
+                };
+            }
+            return list;
+        });
+
+        dispatch({
+            ...state,
+            lists,
+        });
+    },
+});
+
+export default connect(List, { mapDispatchToProps });
