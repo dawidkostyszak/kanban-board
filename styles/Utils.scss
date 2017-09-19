@@ -1,0 +1,38 @@
+.c-button {
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  margin: 0.25rem;
+
+  &:focus {
+    outline: none;
+  }
+
+  &--action {
+    min-width: 300px;
+    padding: 0.75rem;
+    text-align: left;
+    font-size: 1.5rem;
+    margin: 0;
+  }
+
+  &--save {
+    color: #ffffff;
+    font-weight: bold;
+    background: linear-gradient(#61bd4f, #5aac44);
+  }
+
+  &--cancel {
+    background: none;
+    color: grey;
+    font-weight: bold;
+    font-size: 1.25rem;
+  }
+}
+
+.c-input {
+  border-radius: 5px;
+  font-size: 1.5rem;
+  margin: 0.5rem;
+}

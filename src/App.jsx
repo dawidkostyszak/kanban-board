@@ -5,65 +5,64 @@ import List from './List.jsx';
 import connect from './Store.jsx';
 
 class App extends React.Component {
-    addList = () => {
-        const { newListName } = this.props;
-        if (newListName.trim().length) {
-            this.props.addList(newListName);
-        }
+    addNewList = () => {
+        this.props.addNewList();
     }
 
-    saveName = (input) => {
-        this.props.saveListName(input.target.value);
+    renderNewListButton () {
+        if (this.props.newListAdded) {
+            return null;
+        }
+        return (
+            <button
+                className="c-button c-button--action c-app__button"
+                onClick={this.addNewList}
+            >
+                Add a list...
+            </button>
+        );
     }
 
     render () {
-        const { lists = [], newListName } = this.props;
+        const { lists = [] } = this.props;
         return (
             <div className="c-app">
-                {lists.map((list, index) => <List key={index} list={list} />)}
-                <input
-                    className="c-app__button"
-                    onBlur={this.addList}
-                    onChange={this.saveName}
-                    placeholder="Add a list..."
-                    value={newListName}
-                />
+                {lists.map((list) => (
+                    <List
+                        key={list.id}
+                        list={list}
+                    />
+                ))}
+                {this.renderNewListButton()}
             </div>
         );
     }
 }
 
 App.propTypes = {
-    addList: PropTypes.func,
-    saveListName: PropTypes.func,
-    newListName: PropTypes.string,
     lists: PropTypes.arrayOf(PropTypes.shape()),
+    addNewList: PropTypes.func,
+    newListAdded: PropTypes.bool,
 };
 
 const mapStateToProps = (state) => ({
     lists: state.lists,
-    newListName: state.newListName,
+    newListAdded: state.newListAdded,
 });
 
 const mapDispatchToProps = (dispatch, state) => ({
-    addList: (newListName) => {
+    addNewList: () => {
         const newList = {
             id: state.lists.length + 1,
-            name: newListName,
+            name: '',
             cards: [],
-            newCardName: '',
+            isNew: true,
         };
 
         dispatch({
             ...state,
             lists: [...state.lists, newList],
-            newListName: '',
-        });
-    },
-    saveListName: (newListName) => {
-        dispatch({
-            ...state,
-            newListName,
+            newListAdded: true,
         });
     },
 });

@@ -12,8 +12,12 @@ class Storage extends EventEmitter {
         this.listeners.push(listener);
     }
 
+    removeListener = (listener) => {
+        this.listeners = this.listeners.filter((l) => l !== listener);
+    }
+
     refresh () {
-        this.listeners.forEach((listener) => {listener()});
+        this.listeners.forEach((listener) => { listener(); });
     }
 }
 

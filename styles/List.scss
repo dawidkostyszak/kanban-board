@@ -1,8 +1,12 @@
+.c-new-list,
 .c-list {
+  width: 315px;
   background-color: #e2e4e6;
   border-radius: 5px;
   padding: 1rem 0 0 0;
+}
 
+.c-list {
   ul {
     padding: 0;
   }
@@ -15,8 +19,17 @@
   }
 
   &__button {
-    border-radius: 5px;
-    font-size: 1.5rem;
-    margin: 0.5rem;
+    background-color: #e2e4e6;
+    color: #8c8c8c;
+    margin: 0;
+    width: 100%;
+
+    &:hover {
+      background-color: #cdd2d4;
+    }
   }
+}
+
+.c-new-list {
+
 }

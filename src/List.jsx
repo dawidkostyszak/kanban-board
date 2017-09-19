@@ -5,71 +5,148 @@ import Card from './Card.jsx';
 import connect from './Store.jsx';
 
 class List extends React.Component {
-    saveName = (input) => {
-        this.props.saveCardName(input.target.value);
+    addNewCard = () => {
+        this.props.addNewCard();
     }
 
-    addCard = () => {
-        const { list: { newCardName } } = this.props;
-        if (newCardName.trim().length) {
-            this.props.addCard(newCardName);
+    saveListName = (input) => {
+        this.props.updateListName(input.target.value);
+    }
+
+    addList = () => {
+        const { list: { name } } = this.props;
+        if (name.trim().length) {
+            this.props.saveList();
         }
     }
 
-    render () {
-        const { list: { name, cards, newCardName } } = this.props;
+    removeList = () => {
+        this.props.removeList();
+    }
+
+    renderNewCardButton () {
+        const { list: { newCardAdded } } = this.props;
+        if (newCardAdded) {
+            return null;
+        }
+        return (
+            <button
+                className="c-button c-button--action c-list__button"
+                onClick={this.addNewCard}
+            >
+                Add a card...
+            </button>
+        );
+    }
+
+    renderList () {
+        const {
+            list: {
+                id: listId,
+                name,
+                cards,
+            },
+        } = this.props;
+
         return (
             <div className="c-list">
                 <span className="c-list__title">{name}</span>
                 <ul>
-                    {cards.map((cardName, index) => <Card key={index} name={cardName} />)}
+                    {cards.map((card) => (
+                        <Card
+                            key={card.id}
+                            card={card}
+                            listId={listId}
+                        />
+                    ))}
                 </ul>
-                <input
-                    className="c-list__button"
-                    onChange={this.saveName}
-                    onBlur={this.addCard}
-                    placeholder="Add card"
-                    value={newCardName}
-                />
+                {this.renderNewCardButton()}
             </div>
         );
+    }
+
+    renderNewList () {
+        const { list: { name } } = this.props;
+
+        return (
+            <div className="c-new-list">
+                <input
+                    className="c-input"
+                    onChange={this.saveListName}
+                    placeholder="Add a list..."
+                    value={name}
+                />
+                <button
+                    className="c-button c-button--save"
+                    onClick={this.addList}
+                >
+                    Save
+                </button>
+                <button
+                    className="c-button c-button--cancel"
+                    onClick={this.removeList}
+                >
+                    X
+                </button>
+            </div>
+        );
+    }
+
+    render () {
+        const { list: { isNew } } = this.props;
+
+        if (isNew) {
+            return this.renderNewList();
+        }
+        return this.renderList();
     }
 }
 
 List.propTypes = {
-    addCard: PropTypes.func,
-    saveCardName: PropTypes.func,
+    addNewCard: PropTypes.func,
+    saveList: PropTypes.func,
+    removeList: PropTypes.func,
+    updateListName: PropTypes.func,
     list: PropTypes.shape({
         id: PropTypes.number,
         name: PropTypes.string,
-        cards: PropTypes.arrayOf(PropTypes.string),
-        newCardName: PropTypes.string,
+        cards: PropTypes.arrayOf(PropTypes.shape()),
+        isNew: PropTypes.bool,
+        newCardAdded: PropTypes.bool,
     }),
 };
 
 const mapDispatchToProps = (dispatch, state, props) => ({
-    addCard: (newCardName) => {
-        const lists = state.lists.map((list) => {
-            if (list.id === props.list.id) {
+    addNewCard: () => {
+        const { list } = props;
+        const newCard = {
+            id: list.cards.length + 1,
+            name: '',
+            isNew: true,
+        };
+
+        const lists = state.lists.map((l) => {
+            if (l.id === props.list.id) {
                 return {
-                    ...list,
-                    cards: [...list.cards, newCardName],
-                    newCardName: '',
+                    ...l,
+                    cards: [...l.cards, newCard],
+                    newCardAdded: true,
                 };
             }
-            return list;
+            return l;
         });
+
         dispatch({
             ...state,
             lists,
         });
     },
-    saveCardName: (newCardName) => {
+    updateListName: (name) => {
         const lists = state.lists.map((list) => {
             if (list.id === props.list.id) {
                 return {
                     ...list,
-                    newCardName,
+                    name,
                 };
             }
             return list;
@@ -78,6 +155,34 @@ const mapDispatchToProps = (dispatch, state, props) => ({
         dispatch({
             ...state,
             lists,
+        });
+    },
+    saveList: () => {
+        const lists = state.lists.map((list) => {
+            if (list.id === props.list.id) {
+                return {
+                    ...list,
+                    isNew: false,
+                };
+            }
+            return list;
+        });
+
+        dispatch({
+            ...state,
+            lists,
+            newListAdded: false,
+        });
+    },
+    removeList: () => {
+        const lists = state.lists.filter(
+            (list) => list.id !== props.list.id,
+        );
+
+        dispatch({
+            ...state,
+            lists,
+            newListAdded: false,
         });
     },
 });

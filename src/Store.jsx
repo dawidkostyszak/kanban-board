@@ -9,12 +9,17 @@ const connect = (
 ) => class extends React.Component {
     constructor (props) {
         super(props);
-        storage.addListener(this.forceUpdate.bind(this));
+        this.listener = this.forceUpdate.bind(this);
+        storage.addListener(this.listener);
 
         this.defaultState = {
             lists: [],
-            newListName: '',
+            newListAdded: false,
         };
+    }
+
+    componentWillUnmount () {
+        storage.removeListener(this.listener);
     }
 
     render () {
