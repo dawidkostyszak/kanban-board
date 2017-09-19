@@ -33,8 +33,6 @@ const connect = (
         return (
             <WrappedComponent
                 {...props}
-                saveData={storage.save}
-                loadData={storage.load}
             />
         );
     }

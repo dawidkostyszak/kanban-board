@@ -25,7 +25,6 @@ export class SimpleStorage extends Storage {
     constructor () {
         super();
         this.store = {};
-        this.listeners = [];
         this.on('change', this.refresh);
     }
 
