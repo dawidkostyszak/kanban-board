@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import connect from './Store.jsx';
 
-class Card extends React.Component {
+export class StatelessCard extends React.Component {
     saveCardName = (input) => {
         this.props.updateCardName(input.target.value);
     }
@@ -63,12 +63,13 @@ class Card extends React.Component {
     }
 }
 
-Card.propTypes = {
+StatelessCard.propTypes = {
     saveCard: PropTypes.func,
     removeCard: PropTypes.func,
     updateCardName: PropTypes.func,
     card: PropTypes.shape({
         name: PropTypes.string,
+        isNew: PropTypes.bool,
     }),
 };
 
@@ -153,4 +154,4 @@ const mapDispatchToProps = (dispatch, state, props) => ({
     },
 });
 
-export default connect(Card, { mapDispatchToProps });
+export default connect(StatelessCard, { mapDispatchToProps });

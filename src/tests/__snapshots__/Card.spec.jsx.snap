@@ -1,0 +1,38 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Card component should render component correctly 1`] = `
+<li
+  className="c-card"
+>
+  <span
+    className="c-card__title"
+  >
+    Test
+  </span>
+</li>
+`;
+
+exports[`Card component should render input for card name 1`] = `
+<div
+  className="c-new-card"
+>
+  <textarea
+    className="c-input c-new-card__input"
+    onChange={[Function]}
+    placeholder="Add a card..."
+    value=""
+  />
+  <button
+    className="c-button c-button--save"
+    onClick={[Function]}
+  >
+    Add
+  </button>
+  <button
+    className="c-button c-button--cancel"
+    onClick={[Function]}
+  >
+    X
+  </button>
+</div>
+`;
